@@ -1,0 +1,21 @@
+# enforce HTTP browsing into HTTPS and avoid ssl stripping attack
+add_header Strict-Transport-Security "max-age=15552000; includeSubdomains";
+
+# configure content security policy
+add_header Content-Security-Policy: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ws://0.0.0.0:$WB_PROXY_PORT; frame-ancestors 'none'";
+
+# disable content-type sniffing on some browsers.
+add_header X-Content-Type-Options: "nosniff";
+
+#add_header X-DNS-Prefetch-Control: "off";
+
+# prevent opening after download
+add_header X-Download-Options: "noopen";
+
+# prevent from clickJacking attack
+add_header X-Frame-Options: "DENY";
+
+#add_header X-Permitted-Cross-Domain-Policies: "none";
+
+# This header enables the Cross-site scripting (XSS) filter
+add_header X-XSS-Protection: "1; mode=block";

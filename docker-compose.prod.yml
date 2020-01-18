@@ -28,9 +28,11 @@ services:
       - media_volume:/home/app/web/project/media
     ports:
       - 1337:80
+    environment:
+      - WB_PROXY_PORT=1337
     depends_on:
       - web
-
+    command: /bin/sh -c "envsubst '$${WB_PROXY_PORT}' < /etc/nginx/conf.d/security.template > /etc/nginx/conf.d/security.conf && exec nginx -g 'daemon off;'"
 volumes:
   postgres_data:
   static_volume:
