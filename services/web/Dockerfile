@@ -7,6 +7,8 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV http_proxy http://proxy-chain.intel.com:911
+ENV https_proxy http://proxy-chain.intel.com:911
 
 # install psycopg2 dependencies
 RUN apk update \
