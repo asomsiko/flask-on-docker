@@ -1,4 +1,5 @@
 import os
+import logging
 
 from werkzeug import secure_filename
 from flask import (
@@ -13,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 app.config.from_object("project.config.Config")
 db = SQLAlchemy(app)
 
@@ -28,23 +30,41 @@ class User(db.Model):
         self.email = email
 
 
+@app.route("/auth")
+def nginx_auth():
+    original_uri = request.headers.get('X-Original-Uri')
+    app.logger.info(
+        'Flask route: nginx_auth, X-Original-Uri={original_uri}'.format(
+            original_uri=original_uri))
+    if original_uri != '/static/secret.txt':
+        app.logger.info("Authorized")
+        return "Authentication succesfull."
+    else:
+        app.logger.info("Unauthorized")
+        return 'Unauthorized.', 401
+
+
 @app.route("/")
 def hello_world():
+    app.logger.info('Flask route: hello_world')
     return jsonify(hello="world")
 
 
 @app.route("/static/<path:filename>")
 def staticfiles(filename):
+    app.logger.info('Flask route: staticfiles')
     return send_from_directory(app.config["STATIC_FOLDER"], filename)
 
 
 @app.route("/media/<path:filename>")
 def mediafiles(filename):
+    app.logger.info('Flask route: mediafiles')
     return send_from_directory(app.config["MEDIA_FOLDER"], filename)
 
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload_file():
+    app.logger.info('Flask route: upload_file')
     if request.method == "POST":
         file = request.files["file"]
         filename = secure_filename(file.filename)
